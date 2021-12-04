@@ -17,6 +17,6 @@ public interface ScreeningRepository extends JpaRepository<ScreeningEntity, Inte
 
     List<ScreeningEntity> findScreeningEntityByRoom(RoomsEntity roomsEntity);
 
-    @Query(value = "SELECT s FROM ScreeningEntity s WHERE s.movie.name = :movieName AND s.room.name = :roomName")
-    Optional<ScreeningEntity> findByMovieAndRoom(String movieName, String roomName, Date date);
+    Optional<ScreeningEntity> findScreeningEntityByMovie_NameAndRoom_NameAndDate(
+            String movieName, String roomName, Date date);
 }

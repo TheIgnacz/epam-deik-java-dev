@@ -19,7 +19,8 @@ public class DeleteScreeningCommand extends SecureCommand {
     public void deleteScreening(String movieName, String roomName, String date) throws ParseException {
         if (isUserSignedInPrivileged()) {
             screeningRepository
-                    .findByMovieAndRoom(movieName, roomName, Application.simpleDateFormat.parse(date))
+                    .findScreeningEntityByMovie_NameAndRoom_NameAndDate(
+                            movieName, roomName, Application.simpleDateFormat.parse(date))
                     .ifPresent(screeningRepository::delete);
         }
     }
