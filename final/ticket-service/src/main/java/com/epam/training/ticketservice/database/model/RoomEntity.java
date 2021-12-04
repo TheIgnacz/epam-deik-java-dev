@@ -4,9 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-public class RoomsEntity {
+public class RoomEntity {
 
     @Id
     private String name;
@@ -17,13 +18,13 @@ public class RoomsEntity {
     @OneToMany(mappedBy = "room")
     private List<ScreeningEntity> screeningEntities;
 
-    public RoomsEntity(String name, int chairRows, int chairColumn) {
+    public RoomEntity(String name, int chairRows, int chairColumn) {
         this.name = name;
         this.chairRows = chairRows;
         this.chairColumn = chairColumn;
     }
 
-    public RoomsEntity() {
+    public RoomEntity() {
     }
 
     public String getName() {
@@ -54,5 +55,24 @@ public class RoomsEntity {
     public String toString() {
         return String.format("Room %s with %d seats, %d rows and %d columns",
                 name, chairRows * chairColumn, chairRows, chairColumn);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RoomEntity)) {
+            return false;
+        }
+        RoomEntity that = (RoomEntity) o;
+        return getChairRows() == that.getChairRows()
+                && getChairColumn() == that.getChairColumn()
+                && getName().equals(that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getChairRows(), getChairColumn());
     }
 }

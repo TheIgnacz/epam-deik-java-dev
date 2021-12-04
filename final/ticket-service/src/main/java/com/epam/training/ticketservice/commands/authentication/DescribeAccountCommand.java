@@ -11,17 +11,18 @@ import org.springframework.shell.standard.ShellMethod;
 public class DescribeAccountCommand extends SecureCommand {
 
     @ShellMethod(key = "describe account", value = "describe account")
-    public void describeAccount() {
-        if (isUserSignedIn()) {
+    public String describeAccount() {
+        var signedIn = isUserSignedIn();
+        if (signedIn.isEmpty()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication.getPrincipal() instanceof CliUserDetailsService.LoggedIn) {
                 CliUserDetailsService.LoggedIn loggedIn =
                         ((CliUserDetailsService.LoggedIn) authentication.getPrincipal());
                 if (loggedIn.isPrivileged()) {
-                    System.out.println(String.format("Signed in with privileged account '%s'", loggedIn.getUsername()));
+                    return String.format("Signed in with privileged account '%s'", loggedIn.getUsername());
                 }
-
             }
         }
+        return signedIn.get();
     }
 }

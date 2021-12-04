@@ -1,7 +1,7 @@
 package com.epam.training.ticketservice.commands.room;
 
 import com.epam.training.ticketservice.commands.SecureCommand;
-import com.epam.training.ticketservice.database.repository.RoomsRepository;
+import com.epam.training.ticketservice.database.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -10,13 +10,16 @@ import org.springframework.shell.standard.ShellMethod;
 public class DeleteRoomCommand extends SecureCommand {
 
     @Autowired
-    RoomsRepository roomsRepository;
+    RoomRepository roomRepository;
 
     @ShellMethod(key = "delete room", value = "delete room")
-    public void deleteRoom(String name) {
-        if (isUserSignedInPrivileged()) {
-            roomsRepository.findRoomsEntityByName(name)
-                    .ifPresent(roomsRepository::delete);
+    public String deleteRoom(String name) {
+        var signedInPrivileged = isUserSignedInPrivileged();
+        if (signedInPrivileged.isEmpty()) {
+            roomRepository.findRoomsEntityByName(name)
+                    .ifPresent(roomRepository::delete);
+            return null;
         }
+        return signedInPrivileged.get();
     }
 }

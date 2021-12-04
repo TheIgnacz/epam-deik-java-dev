@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 public class ScreeningEntity {
@@ -19,15 +20,15 @@ public class ScreeningEntity {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "name", nullable = false)
-    private MoviesEntity movie;
+    private MovieEntity movie;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "name", nullable = false)
-    private RoomsEntity room;
+    private RoomEntity room;
 
     private Date date;
 
-    public ScreeningEntity(MoviesEntity movie, RoomsEntity room, Date date) {
+    public ScreeningEntity(MovieEntity movie, RoomEntity room, Date date) {
         this.movie = movie;
         this.room = room;
         this.date = date;
@@ -36,19 +37,19 @@ public class ScreeningEntity {
     public ScreeningEntity() {
     }
 
-    public MoviesEntity getMovie() {
+    public MovieEntity getMovie() {
         return movie;
     }
 
-    public void setMovie(MoviesEntity movie) {
+    public void setMovie(MovieEntity movie) {
         this.movie = movie;
     }
 
-    public RoomsEntity getRoom() {
+    public RoomEntity getRoom() {
         return room;
     }
 
-    public void setRoom(RoomsEntity room) {
+    public void setRoom(RoomEntity room) {
         this.room = room;
     }
 
@@ -64,5 +65,24 @@ public class ScreeningEntity {
     public String toString() {
         return String.format("%s, screened in room %s, at %s",
                 movie.toString(), room.getName(), Application.simpleDateFormat.format(date));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ScreeningEntity)) {
+            return false;
+        }
+        ScreeningEntity that = (ScreeningEntity) o;
+        return getMovie().equals(that.getMovie())
+                && getRoom().equals(that.getRoom())
+                && getDate().equals(that.getDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getMovie(), getRoom(), getDate());
     }
 }

@@ -1,6 +1,6 @@
 package com.epam.training.ticketservice.config;
 
-import com.epam.training.ticketservice.database.repository.UsersRepository;
+import com.epam.training.ticketservice.database.repository.UserRepository;
 import com.epam.training.ticketservice.services.CliUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +17,8 @@ import java.util.Arrays;
 public class SpringSecurityConfig {
 
     @Bean
-    public CliUserDetailsService userDetailsService(UsersRepository usersRepository) {
-        return new CliUserDetailsService(usersRepository);
+    public CliUserDetailsService userDetailsService(UserRepository userRepository) {
+        return new CliUserDetailsService(userRepository);
     }
 
     @Bean

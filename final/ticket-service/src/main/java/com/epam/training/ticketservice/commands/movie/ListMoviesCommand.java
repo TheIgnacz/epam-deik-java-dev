@@ -1,6 +1,6 @@
 package com.epam.training.ticketservice.commands.movie;
 
-import com.epam.training.ticketservice.database.model.MoviesEntity;
+import com.epam.training.ticketservice.database.model.MovieEntity;
 import com.epam.training.ticketservice.database.repository.MovieRepository;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -23,7 +23,7 @@ public class ListMoviesCommand {
             return "There are no movies at the moment";
         }
         return movies.stream()
-                .map(MoviesEntity::toString)
+                .map(MovieEntity::toString)
                 .collect(Collectors.joining("\n"));
     }
 }

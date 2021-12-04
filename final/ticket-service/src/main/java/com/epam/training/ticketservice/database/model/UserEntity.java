@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class UsersEntity {
+public class UserEntity {
 
     @Id
     @GeneratedValue
@@ -15,13 +15,13 @@ public class UsersEntity {
     private String pw;
     private boolean privileged;
 
-    public UsersEntity(String name, String pw, boolean privileged) {
+    public UserEntity(String name, String pw, boolean privileged) {
         this.name = name;
         this.pw = pw;
         this.privileged = privileged;
     }
 
-    public UsersEntity() {
+    public UserEntity() {
     }
 
     public String getName() {

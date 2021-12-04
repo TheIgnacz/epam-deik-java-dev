@@ -17,14 +17,14 @@ public class SignInCommand extends SecureCommand {
     AuthenticationManager authenticationManager;
 
     @ShellMethod(value = "sign in privileged", key = "sign in privileged")
-    public void signIn(String name, String pw) {
+    public String signIn(String name, String pw) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(name, pw);
         try {
             Authentication result = authenticationManager.authenticate(authentication);
             SecurityContextHolder.getContext().setAuthentication(result);
-            //SecurityContextHolder.getContext().setAuthentication(null);
+            return null;
         } catch (AuthenticationException authenticationException) {
-            System.out.println("Login failed due to incorrect credentials");
+            return "Login failed due to incorrect credentials";
         }
     }
 }

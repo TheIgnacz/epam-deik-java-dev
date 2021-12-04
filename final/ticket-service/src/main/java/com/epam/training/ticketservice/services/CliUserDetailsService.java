@@ -1,7 +1,7 @@
 package com.epam.training.ticketservice.services;
 
-import com.epam.training.ticketservice.database.model.UsersEntity;
-import com.epam.training.ticketservice.database.repository.UsersRepository;
+import com.epam.training.ticketservice.database.model.UserEntity;
+import com.epam.training.ticketservice.database.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,31 +11,31 @@ import java.util.Collection;
 
 public class CliUserDetailsService implements UserDetailsService {
 
-    private UsersRepository usersRepository;
+    private UserRepository userRepository;
 
-    public CliUserDetailsService(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public CliUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        var user = usersRepository.findUsersEntityByName(userName);
+        var user = userRepository.findUsersEntityByName(userName);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("Login failed due to incorrect credentials");
         }
         return new LoggedIn(user.get());
     }
 
-    public class LoggedIn implements UserDetails {
+    public static class LoggedIn implements UserDetails {
 
-        private final UsersEntity usersEntity;
+        private final UserEntity userEntity;
 
-        public LoggedIn(UsersEntity usersEntity) {
-            this.usersEntity = usersEntity;
+        public LoggedIn(UserEntity userEntity) {
+            this.userEntity = userEntity;
         }
 
         public boolean isPrivileged() {
-            return usersEntity.isPrivileged();
+            return userEntity.isPrivileged();
         }
 
         @Override
@@ -45,12 +45,12 @@ public class CliUserDetailsService implements UserDetailsService {
 
         @Override
         public String getPassword() {
-            return usersEntity.getPw();
+            return userEntity.getPw();
         }
 
         @Override
         public String getUsername() {
-            return usersEntity.getName();
+            return userEntity.getName();
         }
 
         @Override

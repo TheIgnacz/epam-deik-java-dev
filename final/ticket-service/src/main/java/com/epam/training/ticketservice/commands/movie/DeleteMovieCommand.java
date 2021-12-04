@@ -13,10 +13,13 @@ public class DeleteMovieCommand extends SecureCommand {
     MovieRepository movieRepository;
 
     @ShellMethod(key = "delete movie", value = "delete movie")
-    public void deleteMovie(String name) {
-        if (isUserSignedInPrivileged()) {
+    public String deleteMovie(String name) {
+        var signedInPrivileged = isUserSignedInPrivileged();
+        if (signedInPrivileged.isEmpty()) {
             movieRepository.findMoviesEntityByName(name)
                     .ifPresent(movieRepository::delete);
+            return null;
         }
+        return signedInPrivileged.get();
     }
 }

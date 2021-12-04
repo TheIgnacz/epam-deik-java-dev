@@ -16,12 +16,15 @@ public class DeleteScreeningCommand extends SecureCommand {
     ScreeningRepository screeningRepository;
 
     @ShellMethod(key = "delete screening", value = "delete screening")
-    public void deleteScreening(String movieName, String roomName, String date) throws ParseException {
-        if (isUserSignedInPrivileged()) {
+    public String deleteScreening(String movieName, String roomName, String date) throws ParseException {
+        var signedInPrivileged = isUserSignedInPrivileged();
+        if (signedInPrivileged.isEmpty()) {
             screeningRepository
                     .findScreeningEntityByMovie_NameAndRoom_NameAndDate(
                             movieName, roomName, Application.simpleDateFormat.parse(date))
                     .ifPresent(screeningRepository::delete);
+            return null;
         }
+        return signedInPrivileged.get();
     }
 }

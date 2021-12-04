@@ -9,9 +9,12 @@ import org.springframework.shell.standard.ShellMethod;
 public class SignOutCommand extends SecureCommand {
 
     @ShellMethod(value = "sign out", key = "sign out")
-    public void signOut() {
-        if (isUserSignedIn()) {
+    public String signOut() {
+        var signedIn = isUserSignedIn();
+        if (signedIn.isEmpty()) {
             SecurityContextHolder.getContext().setAuthentication(null);
+            return null;
         }
+        return signedIn.get();
     }
 }

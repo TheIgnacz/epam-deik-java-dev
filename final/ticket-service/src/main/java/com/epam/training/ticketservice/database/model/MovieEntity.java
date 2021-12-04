@@ -4,9 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-public class MoviesEntity {
+public class MovieEntity {
 
     @Id
     private String name;
@@ -17,13 +18,13 @@ public class MoviesEntity {
     @OneToMany(mappedBy = "movie")
     private List<ScreeningEntity> screeningEntities;
 
-    public MoviesEntity(String name, String genre, int playtime) {
+    public MovieEntity(String name, String genre, int playtime) {
         this.name = name;
         this.genre = genre;
         this.playtime = playtime;
     }
 
-    public MoviesEntity() {
+    public MovieEntity() {
     }
 
     public String getName() {
@@ -53,5 +54,24 @@ public class MoviesEntity {
     @Override
     public String toString() {
         return name + " (" + genre + ", " + playtime + " minutes)";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MovieEntity)) {
+            return false;
+        }
+        MovieEntity that = (MovieEntity) o;
+        return getPlaytime() == that.getPlaytime()
+                && getName().equals(that.getName())
+                && getGenre().equals(that.getGenre());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getGenre(), getPlaytime());
     }
 }

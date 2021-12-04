@@ -13,8 +13,9 @@ public class UpdateMovieCommand extends SecureCommand {
     MovieRepository movieRepository;
 
     @ShellMethod(key = "update movie", value = "update movie")
-    public void updateMovie(String name, String genre, int playtime) {
-        if (isUserSignedInPrivileged()) {
+    public String updateMovie(String name, String genre, int playtime) {
+        var signedInPrivileged = isUserSignedInPrivileged();
+        if (signedInPrivileged.isEmpty()) {
             var movieOpt = movieRepository.findMoviesEntityByName(name);
             if (movieOpt.isPresent()) {
                 var movie = movieOpt.get();
@@ -23,6 +24,8 @@ public class UpdateMovieCommand extends SecureCommand {
                 movie.setPlaytime(playtime);
                 movieRepository.save(movie);
             }
+            return null;
         }
+        return signedInPrivileged.get();
     }
 }

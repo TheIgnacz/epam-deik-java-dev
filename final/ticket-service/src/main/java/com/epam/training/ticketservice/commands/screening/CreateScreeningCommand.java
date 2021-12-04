@@ -2,11 +2,11 @@ package com.epam.training.ticketservice.commands.screening;
 
 import com.epam.training.ticketservice.Application;
 import com.epam.training.ticketservice.commands.SecureCommand;
-import com.epam.training.ticketservice.database.model.MoviesEntity;
-import com.epam.training.ticketservice.database.model.RoomsEntity;
+import com.epam.training.ticketservice.database.model.MovieEntity;
+import com.epam.training.ticketservice.database.model.RoomEntity;
 import com.epam.training.ticketservice.database.model.ScreeningEntity;
 import com.epam.training.ticketservice.database.repository.MovieRepository;
-import com.epam.training.ticketservice.database.repository.RoomsRepository;
+import com.epam.training.ticketservice.database.repository.RoomRepository;
 import com.epam.training.ticketservice.database.repository.ScreeningRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 public class CreateScreeningCommand extends SecureCommand {
 
     @Autowired
-    RoomsRepository roomsRepository;
+    RoomRepository roomRepository;
 
     @Autowired
     MovieRepository movieRepository;
@@ -33,11 +33,12 @@ public class CreateScreeningCommand extends SecureCommand {
     ScreeningRepository repo;
 
     @ShellMethod(key = "create screening", value = "create screening")
-    public void createScreening(String movieName, String roomName, String date) throws ParseException {
-        if (isUserSignedInPrivileged()) {
+    public String createScreening(String movieName, String roomName, String date) throws ParseException {
+        var signedInPrivileged = isUserSignedInPrivileged();
+        if (signedInPrivileged.isEmpty()) {
             Date parsed = Application.simpleDateFormat.parse(date);
-            Optional<MoviesEntity> optionalMovie = movieRepository.findMoviesEntityByName(movieName);
-            Optional<RoomsEntity> optionalRoom = roomsRepository.findRoomsEntityByName(roomName);
+            Optional<MovieEntity> optionalMovie = movieRepository.findMoviesEntityByName(movieName);
+            Optional<RoomEntity> optionalRoom = roomRepository.findRoomsEntityByName(roomName);
             List<ScreeningEntity> inRoomList =
                     repo.findScreeningEntityByRoom(optionalRoom.orElse(null));
             if (!inRoomList.isEmpty()) {
@@ -45,26 +46,25 @@ public class CreateScreeningCommand extends SecureCommand {
                 Optional<ScreeningError> error =
                         inRoomList.stream()
                                 .map(screeningEntity -> {
-                                    var playtime = optionalMovie.map(MoviesEntity::getPlaytime).orElse(0);
+                                    var playtime = optionalMovie.map(MovieEntity::getPlaytime).orElse(0);
                                     return ScreeningError.getScreeningError(screeningEntity, playtime, instant);
                                 }).filter(Predicate.not(ScreeningError.NONE::equals)).findFirst();
                 if (error.isPresent()) {
                     switch (error.get()) {
                         case OVERLAPPING:
-                            System.out.println("There is an overlapping screening");
-                            break;
+                            return "There is an overlapping screening";
                         case NO_BREAK:
-                            System.out.println("This would start in the break"
-                                    + " period after another screening in this room");
-                            break;
+                            return "This would start in the break"
+                                    + " period after another screening in this room";
                         default:
                             break;
                     }
-                    return;
                 }
             }
             repo.save(new ScreeningEntity(optionalMovie.orElse(null), optionalRoom.orElse(null), parsed));
+            return null;
         }
+        return signedInPrivileged.get();
     }
 
     public enum ScreeningError {
